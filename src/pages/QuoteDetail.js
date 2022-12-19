@@ -7,7 +7,7 @@ import NoQuotesFound from "../components/quotes/NoQuotesFound";
 const DUMMY_QUOTES = [
   {
     id: "q1",
-    author: "Max",
+    author: "R Lopxhan",
     text: "Learning react is fun",
   },
   {
