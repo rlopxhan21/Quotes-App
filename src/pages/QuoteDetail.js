@@ -1,35 +1,59 @@
-import { useParams, Route } from "react-router-dom";
+import { useParams, Route, Link, useRouteMatch } from "react-router-dom";
+import { useEffect } from "react";
 
 import Comments from "../components/comments/Comments";
 import HighlightedQuote from "../components/quotes/HighlightedQuote";
-import NoQuotesFound from "../components/quotes/NoQuotesFound";
-
-const DUMMY_QUOTES = [
-  {
-    id: "q1",
-    author: "R Lopxhan",
-    text: "Learning react is fun",
-  },
-  {
-    id: "q2",
-    author: "Albert Einstein",
-    text: "Genius is 1% inspiration and 99% perspiration",
-  },
-];
+import useHttp from "../hooks/use-http";
+import { getSingleQuote } from "../lib/api";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
 
 const QuoteDetail = () => {
   const params = useParams();
+  const match = useRouteMatch();
+  const { quoteID } = params;
 
-  const quotes = DUMMY_QUOTES.find((quote) => quote.id === params.quoteID);
-  if (!quotes) {
-    return <NoQuotesFound />;
+  console.log(params);
+
+  const {
+    sendRequest,
+    status,
+    data: loadedQuote,
+    error,
+  } = useHttp(getSingleQuote, true);
+
+  useEffect(() => {
+    sendRequest(quoteID);
+  }, [sendRequest, quoteID]);
+
+  if (status === "pending") {
+    return (
+      <div className="centered">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="centered">{error}</p>;
+  }
+
+  if (!loadedQuote.text) {
+    return <p>No Quote Found!</p>;
   }
 
   return (
     <section>
       <h1>Detail Quotes Page</h1>
-      <HighlightedQuote text={quotes.text} author={quotes.author} />
-      <Route path={`/quotes/${params.quoteID}/comments`}>
+      <HighlightedQuote text={loadedQuote.text} author={loadedQuote.author} />
+      <Route path={`${match.path}`} exact>
+        <div className="centered">
+          <Link className="btn--flat" to={`${match.url}/comments`}>
+            Load Comment
+          </Link>
+        </div>
+      </Route>
+
+      <Route path={`${match.path}/comments`}>
         <Comments />
       </Route>
     </section>
