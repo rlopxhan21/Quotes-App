@@ -5,19 +5,6 @@ import { getAllQuotes } from "../lib/api";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
 import NoQuotesFound from "../components/quotes/NoQuotesFound";
 
-const DUMMY_QUOTES = [
-  {
-    id: "q1",
-    author: "Max",
-    text: "Learning react is fun",
-  },
-  {
-    id: "q2",
-    author: "Albert Einstein",
-    text: "Genius is 1% inspiration and 99% perspiration",
-  },
-];
-
 const AllQuotes = () => {
   const {
     sendRequest,
